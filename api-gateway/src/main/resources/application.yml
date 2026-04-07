@@ -1,0 +1,110 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      routes:
+        # AUTH SERVICE
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=0
+
+        # SUBSCRIPTION SERVICE
+        - id: subscription-service
+          uri: lb://subscription-service
+          predicates:
+            - Path=/api/subscriptions/**,/api/packs/**
+          filters:
+            - StripPrefix=0
+            - JwtAuthFilter
+
+        # RESERVATION SERVICE
+        - id: reservation-service
+          uri: lb://reservation-service
+          predicates:
+            - Path=/api/reservations/**,/api/salles/**
+          filters:
+            - StripPrefix=0
+            - JwtAuthFilter
+
+        # BOISSON SERVICE
+        - id: boisson-service
+          uri: lb://boisson-service
+          predicates:
+            - Path=/api/boissons/**
+          filters:
+            - StripPrefix=0
+            - JwtAuthFilter
+
+        # SNACK SERVICE
+        - id: snack-service
+          uri: lb://snack-service
+          predicates:
+            - Path=/api/snacks/**,/api/orders/**,/api/panier/**
+          filters:
+            - StripPrefix=0
+            - JwtAuthFilter
+
+        # SOCIAL SERVICE
+        - id: social-service
+          uri: lb://social-service
+          predicates:
+            - Path=/api/posts/**,/api/messages/**,/api/conversations/**
+          filters:
+            - StripPrefix=0
+            - JwtAuthFilter
+
+        # NOTIFICATION SERVICE
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notifications/**
+          filters:
+            - StripPrefix=0
+            - JwtAuthFilter
+
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASS:}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_USER:admin}:${EUREKA_PASS:chaghaf2025}@discovery-service:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+jwt:
+  secret: ${JWT_SECRET:chaghaf-super-secret-key-2025-agadir-morocco-production}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway
+  endpoint:
+    gateway:
+      enabled: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    ma.chaghaf.gateway: DEBUG
