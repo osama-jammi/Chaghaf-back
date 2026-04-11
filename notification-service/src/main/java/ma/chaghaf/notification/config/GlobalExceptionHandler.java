@@ -14,20 +14,20 @@ import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler {{
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {{
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
         return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
-    }}
+    }
 
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalState(IllegalStateException ex) {{
+    public ResponseEntity<Map<String, Object>> handleIllegalState(IllegalStateException ex) {
         return errorResponse(HttpStatus.CONFLICT, ex.getMessage());
-    }}
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {{
+    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(e -> errors.put(((FieldError) e).getField(), e.getDefaultMessage()));
         Map<String, Object> body = new HashMap<>();
@@ -36,19 +36,20 @@ public class GlobalExceptionHandler {{
         body.put("error", "Validation failed");
         body.put("details", errors);
         return ResponseEntity.badRequest().body(body);
-    }}
+    }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleGeneral(Exception ex) {{
+    public ResponseEntity<Map<String, Object>> handleGeneral(Exception ex) {
         log.error("Unhandled error", ex);
         return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
-    }}
+    }
 
-    private ResponseEntity<Map<String, Object>> errorResponse(HttpStatus status, String message) {{
+    private ResponseEntity<Map<String, Object>> errorResponse(HttpStatus status, String message) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now().toString());
         body.put("status", status.value());
         body.put("error", message);
         return ResponseEntity.status(status).body(body);
-    }}
-}}
+    }
+}
+

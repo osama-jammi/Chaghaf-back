@@ -131,7 +131,7 @@ services:
       EUREKA_USER: ${EUREKA_USER:-admin}
       EUREKA_PASS: ${EUREKA_PASS:-chaghaf2025}
     healthcheck:
-      test: wget -qO- http://localhost:8761/actuator/health || exit 1
+      test: wget -qO- http://admin:chaghaf2025@localhost:8761/actuator/health || exit 1
       interval: 30s
       timeout: 10s
       retries: 5

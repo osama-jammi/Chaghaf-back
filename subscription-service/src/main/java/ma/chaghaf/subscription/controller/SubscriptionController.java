@@ -52,18 +52,39 @@ public class SubscriptionController {
     }
 
     @GetMapping("/packs")
-    public ResponseEntity<List<PackInfo>> getAvailablePacks() {
-        List<PackInfo> packs = List.of(
-            new PackInfo("ONE_PERSON", "1 Personne",
-                new BigDecimal("350.00"), new BigDecimal("3500.00"),
-                1, List.of("Accès illimité", "1 boisson/session", "WiFi premium"), false),
-            new PackInfo("TWO_PERSONS", "2 Personnes",
-                new BigDecimal("600.00"), new BigDecimal("6000.00"),
-                2, List.of("Accès illimité", "2 boissons/session", "WiFi premium", "Réservations prioritaires"), true),
-            new PackInfo("THREE_PERSONS", "3 Personnes",
-                new BigDecimal("800.00"), new BigDecimal("8000.00"),
-                3, List.of("Accès illimité", "3 boissons/session", "WiFi premium", "Réservations prioritaires", "Salle podcast 1h/mois"), false)
-        );
-        return ResponseEntity.ok(packs);
-    }
+public ResponseEntity<?> getAvailablePacks() {
+    var packs = new java.util.ArrayList<>();
+
+    var p1 = new java.util.HashMap<String, Object>();
+    p1.put("id", "ONE_PERSON");
+    p1.put("name", "1 Personne");
+    p1.put("monthlyPrice", 350);
+    p1.put("annualPrice", 3500);
+    p1.put("personsCount", 1);
+    p1.put("features", List.of("Accès illimité", "1 boisson/session", "WiFi premium"));
+    p1.put("popular", false);
+    packs.add(p1);
+
+    var p2 = new java.util.HashMap<String, Object>();
+    p2.put("id", "TWO_PERSONS");
+    p2.put("name", "2 Personnes");
+    p2.put("monthlyPrice", 600);
+    p2.put("annualPrice", 6000);
+    p2.put("personsCount", 2);
+    p2.put("features", List.of("Accès illimité", "2 boissons/session", "WiFi premium", "Réservations prioritaires"));
+    p2.put("popular", true);
+    packs.add(p2);
+
+    var p3 = new java.util.HashMap<String, Object>();
+    p3.put("id", "THREE_PERSONS");
+    p3.put("name", "3 Personnes");
+    p3.put("monthlyPrice", 800);
+    p3.put("annualPrice", 8000);
+    p3.put("personsCount", 3);
+    p3.put("features", List.of("Accès illimité", "3 boissons/session", "WiFi premium", "Réservations prioritaires", "Salle podcast 1h/mois"));
+    p3.put("popular", false);
+    packs.add(p3);
+
+    return ResponseEntity.ok(packs);
+}
 }
