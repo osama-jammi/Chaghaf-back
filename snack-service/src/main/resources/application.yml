@@ -1,21 +1,28 @@
 server:
-  port: 8085
+  port: ${PORT:8085}
 
 spring:
   application:
     name: snack-service
+  
+  # ✅ Configuration PostgreSQL pour Render
   datasource:
-    url: jdbc:sqlserver://${DB_HOST:sqlserver}:${DB_PORT:1433};databaseName=chaghaf_snack;encrypt=true;trustServerCertificate=true
-    username: ${DB_USER:sa}
-    password: ${DB_PASS:Chaghaf@2025!}
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: jdbc:postgresql://${DB_HOST:dpg-d7f7dcdckfvc73dopob0-a}:${DB_PORT:5432}/${DB_NAME:chaghaf_bd}
+    username: ${DB_USER:chaghaf_bd_user}
+    password: ${DB_PASS:FWRaguZzbhJbKFQ4JxhEtjmP6g8E7Jjr}
+    driver-class-name: org.postgresql.Driver
+  
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.SQLServerDialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
     open-in-view: false
 
 eureka:
@@ -35,3 +42,5 @@ management:
 logging:
   level:
     ma.chaghaf.snack: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
