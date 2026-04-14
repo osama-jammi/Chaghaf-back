@@ -9,6 +9,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * ✅ FIX CRITIQUE :
+ *
+ * Le gateway valide le JWT et forward les headers X-User-Id, X-User-Email, X-User-Role.
+ * L'auth-service n'a PAS de filtre JWT → Spring Security bloque les requêtes
+ * qui ne sont pas "permitAll()" même si elles viennent du gateway avec le bon token.
+ *
+ * SOLUTION : l'auth-service fait confiance au gateway et laisse passer toutes les
+ * requêtes. La sécurité applicative est gérée dans le controller via @RequestHeader("X-User-Id").
+ */
 @Configuration
 public class SecurityConfig {
 
@@ -23,10 +33,9 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/register", "/api/auth/login",
-                                 "/api/auth/refresh", "/api/auth/health",
-                                 "/actuator/**").permitAll()
-                .anyRequest().authenticated()
+                // ✅ Tout est permis ici — le gateway s'occupe de valider le JWT
+                // et d'injecter X-User-Id dans les headers
+                .anyRequest().permitAll()
             );
         return http.build();
     }

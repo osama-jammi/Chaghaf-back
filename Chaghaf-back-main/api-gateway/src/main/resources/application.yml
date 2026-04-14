@@ -24,17 +24,19 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
-
         - id: auth-service
           uri: lb://auth-service
           predicates:
             - Path=/api/auth/**
+          filters:
+            - StripPrefix=0
 
         - id: subscription-service
           uri: lb://subscription-service
           predicates:
             - Path=/api/subscriptions/**,/api/packs/**
           filters:
+            - StripPrefix=0
             - JwtAuthFilter
 
         - id: reservation-service
@@ -42,6 +44,7 @@ spring:
           predicates:
             - Path=/api/reservations/**,/api/salles/**
           filters:
+            - StripPrefix=0
             - JwtAuthFilter
 
         - id: boisson-service
@@ -49,6 +52,7 @@ spring:
           predicates:
             - Path=/api/boissons/**
           filters:
+            - StripPrefix=0
             - JwtAuthFilter
 
         - id: snack-service
@@ -56,6 +60,7 @@ spring:
           predicates:
             - Path=/api/snacks/**,/api/orders/**,/api/panier/**
           filters:
+            - StripPrefix=0
             - JwtAuthFilter
 
         - id: social-service
@@ -63,6 +68,7 @@ spring:
           predicates:
             - Path=/api/posts/**,/api/messages/**,/api/conversations/**
           filters:
+            - StripPrefix=0
             - JwtAuthFilter
 
         - id: notification-service
@@ -70,12 +76,14 @@ spring:
           predicates:
             - Path=/api/notifications/**
           filters:
+            - StripPrefix=0
             - JwtAuthFilter
 
 eureka:
   client:
+    # 🔴 CHANGEMENT CRITIQUE : utiliser le nom du conteneur Docker, pas localhost
     service-url:
-      defaultZone: http://admin:chaghaf2025@localhost:8761/eureka/
+      defaultZone: http://admin:chaghaf2025@discovery-service:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
   instance:
@@ -86,13 +94,18 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: health,info,metrics,gateway
   endpoint:
+    gateway:
+      enabled: true
     health:
       show-details: always
 
+jwt:
+  secret: ${JWT_SECRET:chaghaf-super-secret-key-2025-agadir-morocco-production}
+
 logging:
   level:
-    org.springframework.cloud.gateway: TRACE
-    reactor.netty: DEBUG
+    org.springframework.cloud.gateway: DEBUG
     org.springframework.cloud.loadbalancer: DEBUG
+    reactor.netty: INFO
