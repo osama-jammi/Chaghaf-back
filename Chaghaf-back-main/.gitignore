@@ -1,9 +1,0 @@
-target/
-*.jar
-*.war
-.env
-config/firebase-service-account.json
-.DS_Store
-*.iml
-.idea/
-.mvn/
