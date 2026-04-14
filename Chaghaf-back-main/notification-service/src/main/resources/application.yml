@@ -1,0 +1,47 @@
+server:
+  port: 8087
+
+spring:
+  application:
+    name: notification-service
+  
+  # ✅ Configuration PostgreSQL pour Render
+  # modification de la configuration 5ra  datasource pour utiliser les variables d'environnement de Render
+  v  datasource:
+    url: jdbc:postgresql://${DB_HOST:dpg-d7f7dcdckfvc73dopob0-a}:${DB_PORT:5432}/${DB_NAME:chaghaf_bd}
+    username: ${DB_USER:chaghaf_bd_user}
+    password: ${DB_PASS:FWRaguZzbhJbKFQ4JxhEtjmP6g8E7Jjr}
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        # ✅ Changement du dialecte pour PostgreSQL
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    open-in-view: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_USER:admin}:${EUREKA_PASS:chaghaf2025}@discovery-service:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${random.uuid}
+
+firebase:
+  credentials-path: ${FIREBASE_CREDENTIALS:/app/config/firebase-service-account.json}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+logging:
+  level:
+    ma.chaghaf.notification: DEBUG
+    org.hibernate.SQL: DEBUG  # Optionnel : voir les requêtes SQL
